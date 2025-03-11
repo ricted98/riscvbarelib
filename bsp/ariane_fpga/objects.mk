@@ -1,0 +1,1 @@
+../ariane_testharness/objects.mk
