@@ -1,0 +1,88 @@
+# Copyright 2025 ETH Zurich and University of Bologna.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
+CC  = $(RISCV_PREFIX)gcc
+CXX = $(RISCV_PREFIX)g++
+LD  = $(RISCV_PREFIX)ld
+AS  = $(RISCV_PREFIX)as
+OD  = $(RISCV_PREFIX)objdump
+OC  = $(RISCV_PREFIX)objcopy
+AR  = $(RISCV_PREFIX)ar
+
+C_EXT = $(if $(filter $(BSP_COMPRESSED),1),c)
+A_EXT = $(if $(filter $(BSP_ATOMIC),1),a)
+
+ifeq ($(XLEN),64)
+  ifeq ($(BSP_FLOAT),1)
+    LDARCH = rv$(XLEN)im$(A_EXT)fd$(C_EXT)
+    ABI = lp64d
+  else
+    LDARCH = rv$(XLEN)im$(A_EXT)$(C_EXT)
+    ABI = lp64
+  endif
+else
+  ifeq ($(BSP_FLOAT),1)
+    LDARCH = rv$(XLEN)im$(A_EXT)f$(C_EXT)
+    ABI = ilp32f
+  else
+    LDARCH = rv$(XLEN)im$(A_EXT)$(C_EXT)
+    ABI = ilp32
+  endif
+endif
+
+ARCH = $(LDARCH)
+MODEL = medany
+
+BSP_CFLAGS = -march=${ARCH} -mabi=${ABI} -mcmodel=${MODEL} -mrelax
+BSP_LDFLAGS = -march=${LDARCH} -mabi=${ABI} -mcmodel=${MODEL} -mrelax
+
+#  UART parameters
+#  {{{
+ifdef UART_REGSIZE
+  BSP_CFLAGS += -DUART_REGSIZE=$(UART_REGSIZE)
+else
+  BSP_CFLAGS += -DUART_REGSIZE=2
+endif
+ifdef UART_IO_WIDTH
+  BSP_CFLAGS += -DUART_IO_WIDTH=$(UART_IO_WIDTH)
+endif
+ifdef UART_REFCLK
+  BSP_CFLAGS += -DUART_REFCLK=$(UART_REFCLK)
+endif
+ifdef UART_BAUDRATE
+  BSP_CFLAGS += -DUART_BAUDRATE=$(UART_BAUDRATE)
+endif
+ifdef UART_16550
+  BSP_CFLAGS += -DTTY_UART16550=1
+endif
+ifdef NSTDOUT
+  BSP_CFLAGS += -DNSTDOUT
+endif
+ifdef BSP_NCPUS
+  BSP_CFLAGS += -DBSP_CONFIG_NCPUS=$(BSP_NCPUS)
+endif
+ifdef M5
+  BSP_CFLAGS += -DM5=1
+endif
+ifdef QEMU
+  BSP_CFLAGS += -DQEMU=1
+endif
+#  }}}
+
+#  Cache parameters
+#  {{{
+ifndef CMO_ENABLE
+  BSP_CFLAGS += -DBSP_CMO_DISABLE=1
+endif
+#  }}}
+
+BSP_INCDIRS = $(BSP)/include \
+              $(RVB_HOME)/drivers/clint/include \
+              $(RVB_HOME)/drivers/uart16550/include
+
+ifdef M5
+BSP_INCDIRS += $(RVB_HOME)/bsp/shared/m5
+endif
+
+BSP_STACK_SIZE = 0x4000
