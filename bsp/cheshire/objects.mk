@@ -5,7 +5,7 @@
 bsp-objs-y += $(O)/bsp_init.o
 bsp-objs-y += $(O)/bsp_irq.o
 bsp-objs-y += $(O)/bsp_tohost.o
-bsp-objs-y += $(O)/uart.o
+bsp-objs-y += $(O)/bsp_uart.o
 bsp-objs-y += $(O)/bsp/shared/crt0.o
 bsp-objs-y += $(O)/bsp/shared/bsp_start.o
 bsp-objs-y += $(O)/drivers/clint/clint.o

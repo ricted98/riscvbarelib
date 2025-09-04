@@ -5,11 +5,11 @@
 // Nils Wistoff <nwistoff@iis.ee.ethz.ch>
 // Paul Scheffler <paulsc@iis.ee.ethz.ch>
 
-#include "cheshire/uart.h"
-#include "cheshire/util.h"
-#include "cheshire/params.h"
+#include "bsp/bsp_uart.h"
+#include "bsp/bsp_util.h"
+#include "bsp/bsp_params.h"
 
-void cheshire_uart_init(void *uart_base, uint64_t freq, uint64_t baud) {
+void bsp_uart_init(void *uart_base, uint64_t freq, uint64_t baud) {
     uint64_t divisor = freq / (baud << 4);
     uint8_t dlo = (uint8_t)(divisor);
     uint8_t dhi = (uint8_t)(divisor >> 8);
@@ -22,7 +22,7 @@ void cheshire_uart_init(void *uart_base, uint64_t freq, uint64_t baud) {
     *reg8(uart_base, UART_MODEM_CONTROL_REG_OFFSET) = 0x20; // Autoflow mode
 }
 
-int uart_read_ready(void *uart_base) {
+int bsp_uart_read_ready(void *uart_base) {
     return *reg8(uart_base, UART_LINE_STATUS_REG_OFFSET) & (1 << UART_LINE_STATUS_DATA_READY_BIT);
 }
 
@@ -35,17 +35,13 @@ static inline int __uart_write_idle(void *uart_base) {
            *reg8(uart_base, UART_LINE_STATUS_REG_OFFSET) & (1 << UART_LINE_STATUS_TMIT_EMPTY_BIT);
 }
 
-void uart_write(void *uart_base, uint8_t byte) {
+void bsp_uart_write(void *uart_base, uint8_t byte) {
     while (!__uart_write_ready(uart_base))
         ;
     *reg8(uart_base, UART_THR_REG_OFFSET) = byte;
 }
 
-void uart_write_str(void *uart_base, void *src, uint64_t len) {
-    for (uint64_t i = 0; i < len; ++i) uart_write(uart_base, ((uint8_t *)src)[i]);
-}
-
-void uart_write_flush(void *uart_base) {
+void bsp_uart_write_flush(void *uart_base) {
     // Ensure our read comes after any prior writes only
     // TODO: CVA6 likely violates inter-read-write ordering; double-check!
     fence();
@@ -53,21 +49,17 @@ void uart_write_flush(void *uart_base) {
         ;
 }
 
-uint8_t uart_read(void *uart_base) {
-    while (!uart_read_ready(uart_base))
+uint8_t bsp_uart_read(void *uart_base) {
+    while (!bsp_uart_read_ready(uart_base))
         ;
     return *reg8(uart_base, UART_RBR_REG_OFFSET);
 }
 
-void uart_read_str(void *uart_base, void *dst, uint64_t len) {
-    for (uint64_t i = 0; i < len; ++i) ((uint8_t *)dst)[i] = uart_read(uart_base);
-}
-
 // Default UART provides console
-void cheshire_putchar(char byte) {
-    uart_write(&__base_uart, byte);
+void bsp_uart_putchar(char byte) {
+    bsp_uart_write(&__base_uart, byte);
 }
 
-int cheshire_getchar() {
-    return uart_read(&__base_uart);
+int bsp_uart_getchar() {
+    return bsp_uart_read(&__base_uart);
 }

@@ -27,21 +27,17 @@
 #define UART_LINE_STATUS_THR_EMPTY_BIT 5
 #define UART_LINE_STATUS_TMIT_EMPTY_BIT 6
 
-void cheshire_uart_init(void *uart_base, uint64_t freq, uint64_t baud);
+void bsp_uart_init(void *uart_base, uint64_t freq, uint64_t baud);
 
-int uart_read_ready(void *uart_base);
+int bsp_uart_read_ready(void *uart_base);
 
-void uart_write(void *uart_base, uint8_t byte);
+void bsp_uart_write(void *uart_base, uint8_t byte);
 
-void uart_write_str(void *uart_base, void *src, uint64_t len);
+void bsp_uart_write_flush(void *uart_base);
 
-void uart_write_flush(void *uart_base);
-
-uint8_t uart_read(void *uart_base);
-
-void uart_read_str(void *uart_base, void *dst, uint64_t len);
+uint8_t bsp_uart_read(void *uart_base);
 
 // Default UART provides console
-void cheshire_putchar(char byte);
+void bsp_uart_putchar(char byte);
 
-int cheshire_getchar();
+int bsp_uart_getchar();

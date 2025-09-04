@@ -10,8 +10,8 @@
 #pragma once
 
 #include <stdint.h>
-#include "cheshire/regs/cheshire.h"
-#include "params.h"
+#include "bsp/bsp_params.h"
+#include "bsp/bsp_regs.h"
 
 static inline volatile uint8_t *reg8(void *base, int offs) {
     return (volatile uint8_t *)((uint8_t *)base + offs);

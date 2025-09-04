@@ -6,13 +6,13 @@
 #include <stdint.h>
 #include "common/tohost.h"
 #include "common/io.h"
-#include "cheshire/params.h"
-#include "cheshire/regs/cheshire.h"
-#include "cheshire/uart.h"
+#include "bsp/bsp_uart.h"
+#include "bsp/bsp_params.h"
+#include "bsp/bsp_regs.h"
 
 void bsp_tohost_exit(int status)
 {
-    uart_write_flush(&__base_uart);
+    bsp_uart_write_flush(&__base_uart);
     uint32_t v = ((uint32_t)status << 1) | 1u;
     iowritel((uintptr_t)&__base_regs + CHESHIRE_SCRATCH_2_REG_OFFSET, v);
     while (1) cpu_wait_for_interrupt();

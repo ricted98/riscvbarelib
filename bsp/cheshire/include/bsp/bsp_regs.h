@@ -7,8 +7,7 @@
 // Licensed under Solderpad Hardware License, Version 0.51, see LICENSE for details.
 // SPDX-License-Identifier: SHL-0.51
 
-#ifndef _CHESHIRE_REG_DEFS_
-#define _CHESHIRE_REG_DEFS_
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -127,5 +126,4 @@ extern "C" {
 #ifdef __cplusplus
 }  // extern "C"
 #endif
-#endif  // _CHESHIRE_REG_DEFS_
 // End generated register defines for cheshire

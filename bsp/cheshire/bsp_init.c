@@ -9,8 +9,8 @@
 #include "common/tohost.h"
 #include "common/mp.h"
 #include "common/io.h"
-#include "cheshire/params.h"
-#include "cheshire/uart.h"
+#include "bsp/bsp_uart.h"
+#include "bsp/bsp_params.h"
 
 void bsp_mp_init();
 void bsp_irq_init();
@@ -21,9 +21,9 @@ void bsp_init()
     extern int  (*_getchar)();
     extern void (*_tohost_exit)(int status);
 
-    cheshire_uart_init(&__base_uart, UART_REFCLK, UART_BAUDRATE);
-    _putchar = cheshire_putchar;
-    _getchar = cheshire_getchar;
+    bsp_uart_init(&__base_uart, UART_REFCLK, UART_BAUDRATE);
+    _putchar = bsp_uart_putchar;
+    _getchar = bsp_uart_getchar;
 
     _tohost_exit = bsp_tohost_exit;
 
