@@ -57,6 +57,7 @@ uint8_t bsp_uart_read(void *uart_base) {
 
 // Default UART provides console
 void bsp_uart_putchar(char byte) {
+    if (byte == '\n')  bsp_uart_write(&__base_uart, '\r');
     bsp_uart_write(&__base_uart, byte);
 }
 
