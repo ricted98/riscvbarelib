@@ -33,5 +33,5 @@ clint_drv_t* bsp_get_clint_driver(int hartid)
 void bsp_irq_init()
 {
     clint_drv_t *clint = bsp_get_clint_driver(0);
-    clint_init(clint, (uintptr_t)(__base_clint), 1);
+    clint_init(clint, (uintptr_t)(&__base_clint), BSP_CONFIG_CLINT_NTARGETS);
 }
